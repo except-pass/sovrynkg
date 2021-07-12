@@ -1,0 +1,27 @@
+version: "3.7"
+
+volumes: 
+    neo4j_data: {}
+
+services:
+    neo4j:
+        image: wgathright/sovryn-knowledge-graph:latest
+        restart: unless-stopped
+        ports:
+            - "7474:7474" #browser
+            - "7473:7473" 
+            - "7687:7687" #bolt
+        volumes:
+            - ./vendor/neo4j/logs:/logs
+            - ./vendor/neo4j/import:/var/lib/neo4j/import
+            - ./vendor/neo4j/plugins:/plugins
+            - ./vendor/neo4j/conf:/conf
+            - "neo4j_data:/data"
+        environment:
+            - "NEO4J_AUTH=${NEO4J_AUTH:-neo4j/staysovryn}"
+            #- "NEO4J_dbms_allow__upgrade=true"
+            - 'NEO4J_dbms_security_procedures_unrestricted=apoc.*,algo.*'
+            - 'NEO4J_dbms_security_procedures_whitelist=apoc.*,algo.*'
+            - 'NEO4J_apoc_import_file_enabled=true'
+            - 'NEO4J_dbms_shell_enabled=true'
+            - 'NEO4JLABS_PLUGINS=["apoc", "graph-algorithms"]'
